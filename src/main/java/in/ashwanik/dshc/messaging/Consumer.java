@@ -1,6 +1,5 @@
 package in.ashwanik.dshc.messaging;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import in.ashwanik.dshc.SiteHitCounterApplication;
 import in.ashwanik.dshc.common.Constants;
 import in.ashwanik.dshc.common.JsonUtils;
@@ -16,7 +15,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 
 /**
  * Created by Ashwani on 20/06/18.
@@ -48,12 +46,7 @@ public class Consumer {
                     if (msg != null) {
                         Message message = JsonUtils.fromJsonToObject(msg, Message.class);
                         if (message != null && message.getTimestamp() > SiteHitCounterApplication.SERVER_TIMESTAMP) {
-                            log.info(message.getData());
-                            TypeReference<HashMap<String, Object>> typeRef
-                                    = new TypeReference<HashMap<String, Object>>() {
-                            };
-                            log.info(JsonUtils.toJson(JsonUtils.fromJsonToObject(message.getData(), typeRef)));
-
+                            log.info(JsonUtils.toJson(JsonUtils.fromJsonToObject(message.getData(), GCounter.class)));
                             counterService.merge(JsonUtils.fromJsonToObject(message.getData(), GCounter.class));
                         }
                     } else {
